@@ -86,6 +86,8 @@
  */
 @property (nonatomic, getter = isPagingEnabled) BOOL pagingEnabled;
 
+- (CGRect)daysOfWeekViewFrame;
+
 ///----------------------------
 /// @name Scrolling to the Date
 ///----------------------------
