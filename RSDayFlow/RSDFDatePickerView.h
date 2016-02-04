@@ -187,6 +187,8 @@
 
 @optional
 
+- (void)datePickerView:(RSDFDatePickerView *)view didChangeMonth:(NSString *)monthString;
+
 /**
  Asks the delegate if the date should be highlighted during tracking.
  

@@ -57,7 +57,9 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
 
 @end
 
-@implementation RSDFDatePickerView
+@implementation RSDFDatePickerView {
+    NSInteger _visibleSection;
+}
 
 @synthesize calendar = _calendar;
 @synthesize fromDate = _fromDate;
@@ -67,11 +69,13 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
 @synthesize collectionViewLayout = _collectionViewLayout;
 @synthesize daysInWeek = _daysInWeek;
 
+
 #pragma mark - Object Lifecycle
 
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.collectionView removeObserver:self forKeyPath:@"contentSize" context:nil];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
@@ -400,11 +404,22 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
     
     NSDateComponents *todayYearMonthDayComponents = [self.calendar components:(NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay) fromDate:[NSDate date]];
     _today = [self.calendar dateFromComponents:todayYearMonthDayComponents];
-    
+
+    // Observe collection view's initialization
+    [self.collectionView addObserver:self forKeyPath:@"contentSize" options:NSKeyValueObservingOptionOld context:NULL];
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(significantTimeChange:)
                                                  name:UIApplicationSignificantTimeChangeNotification
                                                object:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary  *)change context:(void *)context {
+    // Collection view did finish loading its data
+    // Notify delegate
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+    });
 }
 
 - (NSDate *)dateByMovingToEndOfMonth:(NSDate *)date
@@ -436,6 +451,26 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
         dateComponents.month = section;
         return dateComponents;
     })()) toDate:self.fromDate options:0];
+}
+
+- (NSInteger)visibleSection {
+    if ([self.collectionView indexPathsForVisibleItems].count < 1) {
+        return 0 - 6;
+    }
+    NSArray *sortedIndexPathsForVisibleItems =
+        [[self.collectionView indexPathsForVisibleItems] sortedArrayUsingComparator:^NSComparisonResult(NSIndexPath *obj1, NSIndexPath *obj2) {
+            return (NSComparisonResult)(obj1.section > obj2.section);
+        }];
+
+    return [sortedIndexPathsForVisibleItems[sortedIndexPathsForVisibleItems.count / 2] section];
+}
+
+- (NSString *)monthStringForSection:(NSInteger)section {
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    dateFormatter.calendar = self.calendar;
+    dateFormatter.locale = self.calendar.locale;
+    [dateFormatter setDateFormat:@"MMMM"];
+    return [dateFormatter stringFromDate:[self dateForFirstDayInSection:section]];
 }
 
 - (NSDate *)dateWithFirstDayOfMonth:(NSDate *)date
@@ -657,9 +692,6 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
     
     RSDFDatePickerDate firstDayPickerDate = [self pickerDateFromDate:firstDayInMonth];
     cell.notThisMonth = !((firstDayPickerDate.year == cellPickerDate.year) && (firstDayPickerDate.month == cellPickerDate.month));
-
-    cell.dateLabel.isAccessibilityElement = NO;
-    cell.isAccessibilityElement = !cell.notThisMonth;
     
     if (!cell.isNotThisMonth) {
         NSUInteger cellDateWeekday = [self.calendar components:NSCalendarUnitWeekday fromDate:cellDate].weekday;
@@ -702,8 +734,6 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
         } else {
             cell.outOfRange = NO;
         }
-
-        cell.accessibilityLabel = [NSDateFormatter localizedStringFromDate:cellDate dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
     }
     
     [cell setNeedsDisplay];
@@ -750,6 +780,20 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
     }
     
     return nil;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+
+    NSInteger visibleSection = [self visibleSection];
+    if (_visibleSection == visibleSection) {
+        return;
+    }
+
+    _visibleSection = visibleSection;
+
+    if ([self.delegate respondsToSelector:@selector(datePickerView:didChangeMonth:)]) {
+        [self.delegate datePickerView:self didChangeMonth:[self monthStringForSection:_visibleSection]];
+    }
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
