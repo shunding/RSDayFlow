@@ -417,9 +417,9 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary  *)change context:(void *)context {
     // Collection view did finish loading its data
     // Notify delegate
-    dispatch_async(dispatch_get_main_queue(), ^{
-
-    });
+    if ([self.delegate respondsToSelector:@selector(datePickerView:didChangeMonth:)]) {
+        [self.delegate datePickerView:self didChangeMonth:[self monthStringForSection:[self visibleSection]]];
+    }
 }
 
 - (NSDate *)dateByMovingToEndOfMonth:(NSDate *)date
