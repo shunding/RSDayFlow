@@ -96,6 +96,7 @@
 ///---------------------------------------
 /// @name Accessing Attributes of the View
 ///---------------------------------------
+- (CGRect)markImageViewFrame;
 
 /**
  The view’s background color. Default value is `[UIColor clearColor]`.
