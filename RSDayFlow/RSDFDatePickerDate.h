@@ -17,11 +17,4 @@ struct RSDFDatePickerDate {
     NSUInteger day;
 };
 
-
-typedef enum {
-    kRSDFDatePickerMarkTypeNotMarked,
-    kRSDFDatePickerMarkTypeOneMark,
-    kRSDFDatePickerMarkTypeTwoMarks
-} RSDFDatePickerMarkType;
-
 #endif
