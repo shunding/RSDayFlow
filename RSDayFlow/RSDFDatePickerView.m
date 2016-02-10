@@ -706,6 +706,11 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
                 } else if ([self.dataSource respondsToSelector:@selector(datePickerView:markImageColorForDate:)]) {
                     cell.markImageColor = [self.dataSource datePickerView:self markImageColorForDate:cellDate];
                 }
+                
+                // Update cell mark type
+                if ([self.dataSource respondsToSelector:@selector(datePickerView:markTypeForDate:)]) {
+                    cell.markType = [self.dataSource datePickerView:self markTypeForDate:cellDate];
+                }
             }
         }
         

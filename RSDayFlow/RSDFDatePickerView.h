@@ -270,4 +270,13 @@
  */
 - (UIImage *)datePickerView:(RSDFDatePickerView *)view markImageForDate:(NSDate *)date;
 
+/**
+ * Asks the data source about the mark type for the specified date.
+ * 
+ * @param view The date picker view object that is asking about the mark image for the specified date.
+ * 
+ * @return The mark type for the specified date.
+ */
+- (RSDFDatePickerMarkType)datePickerView:(RSDFDatePickerView *)view markTypeForDate:(NSDate *)date;
+
 @end

@@ -76,6 +76,9 @@
  */
 @property (nonatomic, getter = isMarked) BOOL marked;
 
+
+@property (nonatomic, assign) RSDFDatePickerMarkType markType;
+
 /**
  A Boolean value that determines whether the cell is out of range or not (startDate, endDate)
  */
