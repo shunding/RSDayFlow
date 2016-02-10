@@ -24,12 +24,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-typedef enum {
-    kRSDFDatePickerMarkTypeNotMarked,
-    kRSDFDatePickerMarkTypeOneMark,
-    kRSDFDatePickerMarkTypeTwoMarks
-} RSDFDatePickerMarkType;
+#import <RSDayFlow/RSDFDatePickerMarkType.h>
 
 @protocol RSDFDatePickerViewDelegate;
 @protocol RSDFDatePickerViewDataSource;
