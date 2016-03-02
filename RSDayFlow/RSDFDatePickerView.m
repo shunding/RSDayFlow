@@ -817,8 +817,11 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
 
     _visibleSection = visibleSection;
 
-    if ([self.delegate respondsToSelector:@selector(datePickerView:didChangeMonth:)]) {
-        [self.delegate datePickerView:self didChangeMonth:[self monthStringForSection:_visibleSection]];
+    if ([self.delegate respondsToSelector:@selector(datePickerView:didChangeMonth:withDateOfThatMonth:)])
+    {
+        [self.delegate datePickerView:self
+                       didChangeMonth:[self monthStringForSection:_visibleSection]
+                  withDateOfThatMonth:[self dateForFirstDayInSection:_visibleSection]];
     }
 }
 
