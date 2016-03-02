@@ -771,9 +771,23 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
         monthHeader.date = date;
         
         NSString *monthString = [dateFormatter standaloneMonthSymbols][date.month - 1];
-        monthHeader.dateLabel.text = [NSString stringWithFormat:@"%@ %@", monthString, (date.month == 1 ? @(date.year) : @"")];
+        
+        NSString *yearString = (date.year == self.currentYear)?@"":@(date.year).stringValue;
+        
+        NSString *finalString = nil;
+        
+        if (!yearString.length)
+        {
+            finalString = monthString;
+        }else
+        {
+            finalString = [NSString stringWithFormat:@"%@ %@", monthString, yearString];
+        }
+        
+        monthHeader.dateLabel.text = finalString;
         
         RSDFDatePickerDate today = [self pickerDateFromDate:_today];
+        
         if ( (today.month == date.month) && (today.year == date.year) ) {
             monthHeader.currentMonth = YES;
         } else {
@@ -785,6 +799,13 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
     }
     
     return nil;
+}
+
+- (NSInteger)currentYear
+{
+    NSDateComponents* currentDayComponents = [self.calendar components:NSCalendarUnitYear fromDate:[NSDate date]];
+    
+    return [currentDayComponents valueForComponent:NSCalendarUnitYear];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
