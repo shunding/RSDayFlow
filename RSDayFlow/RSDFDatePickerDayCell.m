@@ -209,41 +209,55 @@
 
 - (void)updateSubviews
 {
-    self.selectedDayImageView.hidden = !self.isSelected || self.isNotThisMonth || self.isOutOfRange;
+    self.selectedDayImageView.hidden = !self.isToday;
     self.overlayImageView.hidden = !self.isHighlighted || self.isNotThisMonth || self.isOutOfRange;
     self.markImageView.hidden = !self.isMarked || self.isNotThisMonth || self.isOutOfRange;
     self.dividerImageView.hidden = self.isNotThisMonth;
 
-    if (self.isNotThisMonth) {
+    if (self.isNotThisMonth)
+    {
         self.dateLabel.textColor = [self notThisMonthLabelTextColor];
         self.dateLabel.font = [self dayLabelFont];
-    } else {
-        if (self.isOutOfRange) {
+    } else
+    {
+        if (self.isOutOfRange)
+        {
             self.dateLabel.textColor = [self outOfRangeDayLabelTextColor];
             self.dateLabel.font = [self outOfRangeDayLabelFont];
         } else {
-            if (!self.isSelected) {
-                if (!self.isToday) {
+            if (!self.isSelected)
+            {
+                if (!self.isToday)
+                {
                     self.dateLabel.font = [self dayLabelFont];
-                    if (!self.dayOff) {
-                        if (self.isPastDate) {
+                    if (!self.dayOff)
+                    {
+                        if (self.isPastDate)
+                        {
                             self.dateLabel.textColor = [self pastDayLabelTextColor];
-                        } else {
+                        } else
+                        {
                             self.dateLabel.textColor = [self dayLabelTextColor];
                         }
-                    } else {
-                        if (self.isPastDate) {
+                    } else
+                    {
+                        if (self.isPastDate)
+                        {
                             self.dateLabel.textColor = [self pastDayOffLabelTextColor];
-                        } else {
+                        } else
+                        {
                             self.dateLabel.textColor = [self dayOffLabelTextColor];
                         }
                     }
-                } else {
+                } else
+                {
                     self.dateLabel.font = [self todayLabelFont];
                     self.dateLabel.textColor = [self todayLabelTextColor];
+                    self.selectedDayImageView.image = [self selectedTodayImage];
                 }
                 
-            } else {
+            } else
+            {
                 if (!self.isToday) {
                     self.dateLabel.font = [self selectedDayLabelFont];
                     self.dateLabel.textColor = [self selectedDayLabelTextColor];
