@@ -58,7 +58,7 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
 @end
 
 @implementation RSDFDatePickerView {
-    NSInteger _visibleSection;
+    NSNumber* _visibleSection;
 }
 
 @synthesize calendar = _calendar;
@@ -417,8 +417,8 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary  *)change context:(void *)context {
     // Collection view did finish loading its data
     // Notify delegate
-    if ([self.delegate respondsToSelector:@selector(datePickerView:didChangeMonth:)]) {
-        [self.delegate datePickerView:self didChangeMonth:[self monthStringForSection:[self visibleSection]]];
+    if ([self.delegate respondsToSelector:@selector(datePickerView:didChangeMonth:withDateOfThatMonth:)]) {
+        [self.delegate datePickerView:self didChangeMonth:[self monthStringForSection:[self visibleSection].integerValue] withDateOfThatMonth:[self dateForFirstDayInSection:_visibleSection.integerValue]];
     }
 }
 
@@ -453,16 +453,16 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
     })()) toDate:self.fromDate options:0];
 }
 
-- (NSInteger)visibleSection {
+- (NSNumber *)visibleSection {
     if ([self.collectionView indexPathsForVisibleItems].count < 1) {
-        return 0 - 6;
+        return _visibleSection?_visibleSection:@(0 - 6);
     }
     NSArray *sortedIndexPathsForVisibleItems =
         [[self.collectionView indexPathsForVisibleItems] sortedArrayUsingComparator:^NSComparisonResult(NSIndexPath *obj1, NSIndexPath *obj2) {
             return (NSComparisonResult)(obj1.section > obj2.section);
         }];
 
-    return [sortedIndexPathsForVisibleItems[sortedIndexPathsForVisibleItems.count / 2] section];
+    return @([sortedIndexPathsForVisibleItems[sortedIndexPathsForVisibleItems.count / 2] section]);
 }
 
 - (NSString *)monthStringForSection:(NSInteger)section {
@@ -810,8 +810,8 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 
-    NSInteger visibleSection = [self visibleSection];
-    if (_visibleSection == visibleSection) {
+    NSNumber* visibleSection = [self visibleSection];
+    if ([_visibleSection isEqualToNumber:visibleSection]) {
         return;
     }
 
@@ -820,8 +820,8 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
     if ([self.delegate respondsToSelector:@selector(datePickerView:didChangeMonth:withDateOfThatMonth:)])
     {
         [self.delegate datePickerView:self
-                       didChangeMonth:[self monthStringForSection:_visibleSection]
-                  withDateOfThatMonth:[self dateForFirstDayInSection:_visibleSection]];
+                       didChangeMonth:[self monthStringForSection:_visibleSection.integerValue]
+                  withDateOfThatMonth:[self dateForFirstDayInSection:_visibleSection.integerValue]];
     }
 }
 

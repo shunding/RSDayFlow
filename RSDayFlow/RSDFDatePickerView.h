@@ -188,8 +188,6 @@
 
 @optional
 
-- (void)datePickerView:(RSDFDatePickerView *)view didChangeMonth:(NSString *)monthString;
-
 - (void)datePickerView:(RSDFDatePickerView *)view didChangeMonth:(NSString *)monthString withDateOfThatMonth:(NSDate *)date;
 
 /**
