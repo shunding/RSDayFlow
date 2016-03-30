@@ -499,4 +499,10 @@
     return dividerImage;
 }
 
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    self.selectedDayImageView.hidden = YES;
+}
+
 @end
