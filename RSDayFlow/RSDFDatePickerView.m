@@ -455,7 +455,7 @@ static NSString * const RSDFDatePickerViewDayCellIdentifier = @"RSDFDatePickerVi
 
 - (NSNumber *)visibleSection {
     if ([self.collectionView indexPathsForVisibleItems].count < 1) {
-        return _visibleSection?_visibleSection:@(0 - 6);
+        return _visibleSection?_visibleSection:@(0 + 6);
     }
     NSArray *sortedIndexPathsForVisibleItems =
         [[self.collectionView indexPathsForVisibleItems] sortedArrayUsingComparator:^NSComparisonResult(NSIndexPath *obj1, NSIndexPath *obj2) {
